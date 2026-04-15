@@ -6,7 +6,9 @@ extern void set_raster_irq(void);
 int main(void) {
     set_border();
     set_raster_irq();
-    printf("HELLO, WORLD!\n");
-    for (;;) { }
+    printf("Hello!\n");
+    for (;;) {
+        printf("salut\n");
+     }
     return 0;
 }

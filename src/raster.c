@@ -5,7 +5,7 @@
    On ne peut pas l'écrire en C standard : un handler d'IRQ doit
    préserver tous les registres et terminer par RTI (ou chaîner via
    $EA31), ce que le code généré par cc65 ne fait pas. */
-extern void raster_handler(void);
+extern void raster_handler_top(void);
 
 void set_raster_irq(void) {
     /* Vecteur IRQ logiciel du KERNAL en $0314/$0315 : quand une IRQ
@@ -49,7 +49,7 @@ void set_raster_irq(void) {
     VIC.ctrl1 &= 0x7f;
 
     /* Installation atomique du nouveau handler dans le vecteur IRQ. */
-    *vec = raster_handler;
+    *vec = raster_handler_top;
 
     /* VIC $D019 (Interrupt Request Register) : écrire 1 sur un bit
        l'acquitte. $FF acquitte tout ce qui pourrait être en attente,

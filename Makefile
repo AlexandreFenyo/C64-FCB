@@ -1,7 +1,7 @@
 CC     := cl65
 TARGET := c64
 PRG    := hello.prg
-OBJS   := src/main.o src/border.o
+OBJS   := src/main.o src/border.o src/raster.o
 
 all: $(PRG)
 

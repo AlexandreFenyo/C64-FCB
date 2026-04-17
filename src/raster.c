@@ -60,3 +60,22 @@ void set_raster_irq(void) {
        du faisceau sur la ligne 50, raster_handler sera appelé. */
     CLI();
 }
+
+/* À appeler avant que main() ne retourne, sinon le VIC continue à
+   lever une IRQ raster que le handler KERNAL par défaut ($EA31) ne
+   sait pas acquitter -> la machine reste bloquée en boucle d'IRQ
+   et le RUN suivant semble figé. */
+void clear_raster_irq(void) {
+    void (**vec)(void) = (void (**)(void))0x0314;
+
+    SEI();
+    VIC.imr = 0x00;     /* désactiver toutes les sources d'IRQ VIC */
+    VIC.irr = 0xff;     /* acquitter une éventuelle IRQ en attente */
+    /* Restaurer le vecteur IRQ KERNAL par défaut : $EA31. Sinon
+       l'IRQ Timer A du CIA1 (60 Hz) passerait encore par notre
+       raster_handler_top, qui ferait INC $D020 à chaque tick. */
+    *vec = (void (*)(void))0xea31;
+    CIA1.icr = 0x81;    /* réautoriser l'IRQ Timer A du CIA1
+                           (bit7=1 = enable, bit0=1 = Timer A) */
+    CLI();
+}
